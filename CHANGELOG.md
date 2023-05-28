@@ -11,6 +11,27 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 Packages with breaking changes:
 
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`flame_lint` - `v1.0.0`](#flame_lint---v100)
+
+---
+
+#### `flame_lint` - `v1.0.0`
+
+ - **FIX**: Update sdk constraints to >=3.0.0 ([#2554](https://github.com/flame-engine/flame/issues/2554)). ([2f71e06e](https://github.com/flame-engine/flame/commit/2f71e06eb86ffc65cd459c4d722eee2470be13e5))
+
+
+## 2023-05-28
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
  - [`flame` - `v1.8.0`](#flame---v180)
  - [`flame_rive` - `v1.8.0`](#flame_rive---v180)
  - [`flame_test` - `v1.11.0`](#flame_test---v1110)
