@@ -1,6 +1,6 @@
 import 'package:flame/game.dart';
 import 'package:flame/src/components/core/component.dart';
-import 'package:flame/src/events/flame_game_mixins/has_tappable_components.dart';
+import 'package:flame/src/events/dispatchers/multi_tap_dispatcher.dart';
 import 'package:flame/src/events/messages/tap_cancel_event.dart';
 import 'package:flame/src/events/messages/tap_down_event.dart';
 import 'package:flame/src/events/messages/tap_up_event.dart';

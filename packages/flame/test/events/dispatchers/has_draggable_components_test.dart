@@ -3,7 +3,7 @@
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
-import 'package:flame/src/events/flame_game_mixins/has_draggable_components.dart';
+import 'package:flame/src/events/dispatchers/multi_drag_dispatcher.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -121,24 +121,16 @@ void main() {
     );
 
     testWidgets(
-      'game with Draggables',
+      'game with DragCallbacksComponent',
       (tester) async {
         var nDragCallbackUpdates = 0;
         var nDraggableUpdates = 0;
-        final game = _GameWithDualDraggableComponents(
+        final game = FlameGame(
           children: [
             _DragCallbacksComponent(
               size: Vector2.all(100),
               onDragStart: (e) => e.continuePropagation = true,
               onDragUpdate: (e) => nDragCallbackUpdates++,
-            ),
-            _DraggableComponent(
-              size: Vector2.all(100),
-              onDragStart: (e) => true,
-              onDragUpdate: (e) {
-                nDraggableUpdates++;
-                return true;
-              },
             ),
           ],
         );
@@ -158,11 +150,6 @@ void main() {
       },
     );
   });
-}
-
-class _GameWithDualDraggableComponents extends FlameGame
-    with HasDraggablesBridge {
-  _GameWithDualDraggableComponents({super.children});
 }
 
 class _DragCallbacksComponent extends PositionComponent with DragCallbacks {
@@ -201,28 +188,4 @@ class _DragCallbacksComponent extends PositionComponent with DragCallbacks {
 class _SimpleDragCallbacksComponent extends PositionComponent
     with DragCallbacks {
   _SimpleDragCallbacksComponent({super.size});
-}
-
-class _DraggableComponent extends PositionComponent with Draggable {
-  _DraggableComponent({
-    super.size,
-    bool Function(DragStartInfo)? onDragStart,
-    bool Function(DragUpdateInfo)? onDragUpdate,
-    bool Function(DragEndInfo)? onDragEnd,
-  })  : _onDragStart = onDragStart,
-        _onDragUpdate = onDragUpdate,
-        _onDragEnd = onDragEnd;
-
-  final bool Function(DragStartInfo)? _onDragStart;
-  final bool Function(DragUpdateInfo)? _onDragUpdate;
-  final bool Function(DragEndInfo)? _onDragEnd;
-
-  @override
-  bool onDragStart(DragStartInfo info) => _onDragStart?.call(info) ?? true;
-
-  @override
-  bool onDragUpdate(DragUpdateInfo info) => _onDragUpdate?.call(info) ?? true;
-
-  @override
-  bool onDragEnd(DragEndInfo info) => _onDragEnd?.call(info) ?? true;
 }

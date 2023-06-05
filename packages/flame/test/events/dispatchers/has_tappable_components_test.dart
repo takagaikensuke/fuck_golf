@@ -1,9 +1,6 @@
-// ignore_for_file: deprecated_member_use_from_same_package
-
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
-import 'package:flame/src/events/flame_game_mixins/has_tappable_components.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -214,70 +211,6 @@ void main() {
       },
     );
   });
-
-  group('HasTappablesBridge', () {
-    testWidgets(
-      'taps are delivered to tappables of both kinds',
-      (tester) async {
-        var nTappableDown = 0;
-        var nTappableCancelled = 0;
-        var nTapCallbacksDown = 0;
-        var nTapCallbacksCancelled = 0;
-        final game = _GameWithDualTappableComponents(
-          children: [
-            _TapCallbacksComponent(
-              size: Vector2(100, 100),
-              position: Vector2(20, 20),
-              onTapDown: (e) {
-                e.continuePropagation = true;
-                nTapCallbacksDown++;
-              },
-              onTapCancel: (e) {
-                e.continuePropagation = true;
-                nTapCallbacksCancelled++;
-              },
-            ),
-            _TappableComponent(
-              size: Vector2(100, 100),
-              position: Vector2(40, 40),
-              onTapDown: (e) {
-                nTappableDown++;
-                return true;
-              },
-              onTapCancel: () {
-                nTappableCancelled++;
-                return true;
-              },
-            )
-          ],
-        );
-        await tester.pumpWidget(GameWidget(game: game));
-        await tester.pump();
-        await tester.pump(const Duration(milliseconds: 10));
-        expect(game.children.length, 3);
-        expect(game.children.last, isA<MultiTapDispatcher>());
-
-        await tester.tapAt(const Offset(50, 50));
-        await tester.pump(const Duration(seconds: 1));
-        expect(nTapCallbacksDown, 1);
-        expect(nTappableDown, 1);
-
-        // cancelled tap
-        final gesture = await tester.startGesture(const Offset(100, 100));
-        await gesture.cancel();
-        await tester.pump(const Duration(seconds: 1));
-        expect(nTapCallbacksDown, 2);
-        expect(nTapCallbacksCancelled, 1);
-        expect(nTappableDown, 2);
-        expect(nTappableCancelled, 1);
-      },
-    );
-  });
-}
-
-class _GameWithDualTappableComponents extends FlameGame
-    with HasTappablesBridge {
-  _GameWithDualTappableComponents({super.children});
 }
 
 class _TapCallbacksComponent extends PositionComponent with TapCallbacks {
@@ -314,28 +247,4 @@ class _TapCallbacksComponent extends PositionComponent with TapCallbacks {
 
 class _SimpleTapCallbacksComponent extends PositionComponent with TapCallbacks {
   _SimpleTapCallbacksComponent({super.size});
-}
-
-class _TappableComponent extends PositionComponent with Tappable {
-  _TappableComponent({
-    required Vector2 size,
-    required Vector2 position,
-    bool Function(TapDownInfo)? onTapDown,
-    bool Function()? onTapCancel,
-  })  : _onTapDown = onTapDown,
-        _onTapCancel = onTapCancel,
-        super(size: size, position: position);
-
-  final bool Function(TapDownInfo)? _onTapDown;
-  final bool Function()? _onTapCancel;
-
-  @override
-  bool onTapDown(TapDownInfo info) {
-    return _onTapDown?.call(info) ?? true;
-  }
-
-  @override
-  bool onTapCancel() {
-    return _onTapCancel?.call() ?? true;
-  }
 }
